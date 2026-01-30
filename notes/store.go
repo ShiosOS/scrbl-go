@@ -133,6 +133,7 @@ func (s *Store) ListDays() ([]time.Time, error) {
 }
 
 // LoadStream loads the last N days of notes stitched together (oldest first).
+// Today is always included even if it has no notes yet.
 func (s *Store) LoadStream(numDays int) ([]DayNote, error) {
 	days, err := s.ListDays()
 	if err != nil {
@@ -147,6 +148,17 @@ func (s *Store) LoadStream(numDays int) ([]DayNote, error) {
 	// Take the most recent N days
 	recent := days[:limit]
 
+	// Check if today is already in the list
+	today := Today()
+	todayStr := today.Format("2006-01-02")
+	todayIncluded := false
+	for _, d := range recent {
+		if d.Format("2006-01-02") == todayStr {
+			todayIncluded = true
+			break
+		}
+	}
+
 	// Reverse to oldest-first for display
 	var result []DayNote
 	for i := len(recent) - 1; i >= 0; i-- {
@@ -160,6 +172,14 @@ func (s *Store) LoadStream(numDays int) ([]DayNote, error) {
 		result = append(result, DayNote{
 			Date:    recent[i],
 			Entries: parseEntries(content),
+		})
+	}
+
+	// Always include today so the user can select and edit it
+	if !todayIncluded {
+		result = append(result, DayNote{
+			Date:    today,
+			Entries: nil,
 		})
 	}
 

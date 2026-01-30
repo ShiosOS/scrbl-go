@@ -44,6 +44,7 @@ func buildStreamContent(days []notes.DayNote, width int, store *notes.Store, foc
 		// then render through Glamour directly.
 		raw, err := store.ReadDay(day.Date)
 		if err != nil || raw == "" {
+			// Still show the divider for days with no content (e.g. today)
 			continue
 		}
 
