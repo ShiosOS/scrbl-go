@@ -75,14 +75,11 @@ func (s *Store) AppendEntry(d time.Time, content string, isTask bool) error {
 		}
 	}
 
-	now := time.Now()
-	timestamp := now.Format("3:04 PM")
-
 	var line string
 	if isTask {
-		line = fmt.Sprintf("## %s\n- [ ] %s\n\n", timestamp, content)
+		line = fmt.Sprintf("- [ ] %s\n", content)
 	} else {
-		line = fmt.Sprintf("## %s\n%s\n\n", timestamp, content)
+		line = fmt.Sprintf("%s\n", content)
 	}
 
 	_, err = f.WriteString(line)
