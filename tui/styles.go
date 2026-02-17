@@ -1,179 +1,88 @@
 package tui
 
-import (
-	"github.com/charmbracelet/lipgloss"
+import "github.com/charmbracelet/lipgloss"
+
+const (
+	dracBg           = "#2A212C"
+	dracFg           = "#F8F8F2"
+	dracSelection    = "#544158"
+	dracComment      = "#624C67"
+	dracCursor       = "#9F70A9"
+	dracBlue         = "#9580FF"
+	dracBlueBright   = "#AA99FF"
+	dracGreen        = "#8AFF80"
+	dracPink         = "#FF80BF"
+	dracPinkBright   = "#FF99CC"
+	dracYellow       = "#FFFF80"
+	dracYellowBright = "#FFFF99"
+	dracRed          = "#FF9580"
 )
 
 var (
-	// ── Pastel Pink / Blue / White palette ──
-	pastelPink   = lipgloss.Color("#F9A8D4") // Pink
-	pastelBlue   = lipgloss.Color("#93C5FD") // Blue
-	pastelLav    = lipgloss.Color("#C4B5FD") // Lavender
-	white        = lipgloss.Color("#F8FAFC") // Bright white
-	softWhite    = lipgloss.Color("#E2E8F0") // Soft white
-	dimWhite     = lipgloss.Color("#94A3B8") // Dim text
-	mutedGray    = lipgloss.Color("#64748B") // Muted
-	darkGray     = lipgloss.Color("#475569") // Darker muted
-	successGreen = lipgloss.Color("#86EFAC") // Pastel green
-	warnAmber    = lipgloss.Color("#FCD34D") // Pastel yellow
-	errorRed     = lipgloss.Color("#FCA5A5") // Pastel red
-
-	// Day divider for past days
-	dayDividerStyle = lipgloss.NewStyle().
-			Foreground(dimWhite).
-			Bold(true).
-			PaddingTop(1).
-			PaddingBottom(0)
-
-	// Day divider for today
-	todayDividerStyle = lipgloss.NewStyle().
-				Foreground(pastelPink).
+	streamTitleStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.Color(dracFg)).
+				Background(lipgloss.Color(dracBg)).
 				Bold(true).
-				PaddingTop(1).
-				PaddingBottom(0)
+				Padding(0, 1)
 
-	// Focused day divider
-	focusedDayDividerStyle = lipgloss.NewStyle().
-				Foreground(white).
-				Background(lipgloss.Color("#3B1D4E")).
-				Bold(true).
-				PaddingTop(1).
-				PaddingBottom(0)
+	streamMetaStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color(dracBlueBright)).
+			Background(lipgloss.Color(dracBg)).
+			Padding(0, 1)
 
-	// Timestamp style
-	timestampStyle = lipgloss.NewStyle().
-			Foreground(pastelBlue).
+	streamRuleStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color(dracComment))
+
+	boxStyle = lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color(dracComment)).
+			Foreground(lipgloss.Color(dracFg)).
+			Background(lipgloss.Color(dracBg)).
+			Padding(0, 1)
+
+	activeBoxStyle = lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color(dracBlue)).
+			Foreground(lipgloss.Color(dracFg)).
+			Background(lipgloss.Color(dracBg)).
+			Padding(0, 1)
+
+	composeTitleStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.Color(dracPinkBright)).
+				Bold(true)
+
+	dayHeaderStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color(dracYellowBright)).
 			Bold(true)
 
-	// Input box border
-	inputBoxStyle = lipgloss.NewStyle().
-			Border(lipgloss.RoundedBorder()).
-			BorderForeground(darkGray).
-			Padding(0, 1)
+	guideRailStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color(dracComment))
 
-	// Input box border when focused
-	inputBoxFocusedStyle = lipgloss.NewStyle().
-				Border(lipgloss.RoundedBorder()).
-				BorderForeground(pastelPink).
-				Padding(0, 1)
-
-	// Status bar at the bottom
-	statusBarStyle = lipgloss.NewStyle().
-			Foreground(dimWhite).
-			PaddingTop(0)
-
-	// Mode indicator
-	insertModeStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#0F172A")).
-			Background(pastelPink).
-			Bold(true).
-			Padding(0, 1)
-
-	normalModeStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#0F172A")).
-			Background(pastelBlue).
-			Bold(true).
-			Padding(0, 1)
-
-	// Search overlay
-	searchBoxStyle = lipgloss.NewStyle().
-			Border(lipgloss.RoundedBorder()).
-			BorderForeground(pastelBlue).
-			Padding(0, 1).
-			Width(60)
-
-	searchResultStyle = lipgloss.NewStyle().
-				Foreground(softWhite)
-
-	searchResultDateStyle = lipgloss.NewStyle().
-				Foreground(pastelBlue).
+	guidePointerStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.Color(dracPink)).
 				Bold(true)
 
-	searchResultSelectedStyle = lipgloss.NewStyle().
-					Foreground(white).
-					Background(lipgloss.Color("#1E293B")).
-					Bold(true)
+	guideLineStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color(dracFg)).
+			Background(lipgloss.Color(dracSelection))
 
-	// Help text
-	helpStyle = lipgloss.NewStyle().
-			Foreground(darkGray)
+	modeStreamStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color(dracBg)).
+			Background(lipgloss.Color(dracGreen)).
+			Bold(true)
 
-	// Sync indicator
-	syncingStyle = lipgloss.NewStyle().
-			Foreground(warnAmber)
-
-	syncedStyle = lipgloss.NewStyle().
-			Foreground(successGreen)
-
-	// Edit mode
-	editModeStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#0F172A")).
-			Background(warnAmber).
-			Bold(true).
-			Padding(0, 1)
-
-	editInsertModeStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.Color("#0F172A")).
-				Background(pastelPink).
-				Bold(true).
-				Padding(0, 1)
-
-	editNormalModeStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.Color("#0F172A")).
-				Background(pastelBlue).
-				Bold(true).
-				Padding(0, 1)
-
-	editCommandModeStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.Color("#0F172A")).
-				Background(warnAmber).
-				Bold(true).
-				Padding(0, 1)
-
-	editHeaderStyle = lipgloss.NewStyle().
-			Foreground(white).
-			Background(lipgloss.Color("#3B1D4E")).
-			Bold(true).
-			Padding(0, 1)
-
-	editBoxStyle = lipgloss.NewStyle().
-			Border(lipgloss.RoundedBorder()).
-			BorderForeground(pastelLav).
-			Padding(0, 1)
-
-	// Command line style
-	commandLineStyle = lipgloss.NewStyle().
-				Foreground(white).
+	modeComposeStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.Color(dracBg)).
+				Background(lipgloss.Color(dracPink)).
 				Bold(true)
+
+	subtleStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color(dracCursor))
+
+	errorStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color(dracRed)).
+			Bold(true)
+
+	loadingStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color(dracBlueBright))
 )
-
-// DayDivider renders a day divider line.
-func DayDivider(date string, isToday bool, focused bool, width int) string {
-	style := dayDividerStyle
-	if focused {
-		style = focusedDayDividerStyle
-	} else if isToday {
-		style = todayDividerStyle
-	}
-
-	prefix := "╌╌╌╌╌ "
-	if focused {
-		prefix = "▶ "
-	}
-	suffix := " "
-
-	label := date
-	if isToday {
-		label = date + " (Today)"
-	}
-
-	remaining := width - lipgloss.Width(prefix) - lipgloss.Width(suffix) - lipgloss.Width(label)
-	if remaining < 4 {
-		remaining = 4
-	}
-	for i := 0; i < remaining; i++ {
-		suffix += "╌"
-	}
-
-	return style.Render(prefix + label + suffix)
-}
